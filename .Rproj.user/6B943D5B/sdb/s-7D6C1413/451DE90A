@@ -1,0 +1,18 @@
+{
+    "contents" : "suppressPackageStartupMessages(library(httr))\nsuppressPackageStartupMessages(library(jsonlite))\nsuppressPackageStartupMessages(library(XML))\nsuppressPackageStartupMessages(library(dplyr))\nsuppressPackageStartupMessages(library(stringr))\n\n#' set Google API key for future functions\n#' @param key your API key\nset_apikey <- function(key) options('googleflightskey'=key)\n\n#' Search QPX for flights\n#' @param origin Departing Airport Code\n#' @param dest Destination Airport Code\n#' @param startDate Departure date (yyyy-mm-dd)\n#' @param startDate Return date (yyyy-mm-dd)\n#' @param numPassengers Number of people traveling\nsearch <- function(origin,dest,startDate,returnDate,numPassengers=1,...){\n\n  base_url <- paste('https://www.googleapis.com/qpxExpress/v1/trips/search?key=',\n                    getOption('googleflightskey'),sep='')\n\n  # Build query\n  query <- list(\n    request=list(\n      passengers=list(adultCount=numPassengers),\n      slice=data.frame(origin=c(origin,dest),destination=c(dest,origin),date=c(startDate,returnDate)))\n    )\n\n  # make Request\n  request <- POST(url = base_url,body=query,encode='json')\n\n  # Check if query was successful\n  if(status_code(r) != 200) stop('Error with request...')\n\n  return(content(r))\n}\n\n",
+    "created" : 1442158517767.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3626433471",
+    "id" : "451DE90A",
+    "lastKnownWriteTime" : 1442182119,
+    "path" : "/media/roberto/Main Storage/Documents/R/packages/googleflights/R/api.R",
+    "project_path" : "R/api.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
