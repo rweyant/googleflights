@@ -35,3 +35,19 @@ search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
   return(content(r))
 }
 
+simplify_ <- function(content){
+  names(content$trips)
+  length(content$trips)
+  names(content$trips)
+  content$trips$data$airport[1]
+  tmp <- content$trips$tripOption[1]
+  tmp2 <- tmp[[1]]
+  tmp2$saleTotal
+  tmp3 <- tmp2$slice
+  tmp4 <- tmp3[[1]]
+  tmp4$duration
+
+  content$trips$tripOption
+  content$trips$tripOption[[1]]$saleTotal
+  salePrice <- sapply(content$trips$tripOption,function(x) gsub('USD','',x$saleTotal))
+}
