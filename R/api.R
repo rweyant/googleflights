@@ -30,12 +30,55 @@ search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
   request <- POST(url = base_url,body=query,encode='json')
 
   # Check if query was successful
-  if(status_code(r) != 200) stop('Error with request...')
+  if(status_code(request) != 200) stop('Error with request...')
 
-  return(content(r))
+  return(content(request))
+}
+
+summarize_segments <- function(trip){
+
+  startFlight <- trip$slice[[1]]
+  returnFlight <- trip$slice[[2]]
+
+  price <- trip$saleTotal %>% gsub('USD','',.) %>% as.numeric
+
+  startOrig <- sapply(startFlight$segment, function(x) x$leg[[1]]$origin)
+  startDest <- sapply(startFlight$segment, function(x) x$leg[[1]]$destination)
+
+  returnOrig <- sapply(returnFlight$segment, function(x) x$leg[[1]]$origin)
+  returnDest <- sapply(returnFlight$segment, function(x) x$leg[[1]]$destination)
+
+  departing_flights <- sapply(startFlight$segment,function(x) x$flight %>% unlist %>% paste(collapse='-'))
+  returning_flights <- sapply(returnFlight$segment,function(x) x$flight %>% unlist %>% paste(collapse='-'))
+
+  departing_carriers <- sapply(startFlight$segment,function(x) x$flight$carrier)
+  returning_carriers <- sapply(returnFlight$segment,function(x) x$flight$carrier)
+
+  # test <- startFlight$segment[[1]]
+
+  cbind.data.frame(price,
+                   departing_stops=length(startOrig)-1,
+                   returning_stops=length(returnOrig)-1,
+                   departing_locations=startOrig,
+                   returning_locations=returnOrig,
+                   departing_flights=departing_flights,
+                   returning_flights=returning_flights,
+                   departing_carriers=departing_carriers,
+                   returning_carriers=returning_carriers,
+                   stringsAsFactors=FALSE)
+
 }
 
 simplify_ <- function(content){
+
+  # Each trip
+  trips <- content$trips$tripOption
+  # Extract information from each trip.
+  summary <-
+    sapply(trips,summarize_trip) %>% t
+  }
+
+nothing <- function(){
   names(content$trips)
   length(content$trips)
   names(content$trips)
@@ -50,4 +93,11 @@ simplify_ <- function(content){
   content$trips$tripOption
   content$trips$tripOption[[1]]$saleTotal
   salePrice <- sapply(content$trips$tripOption,function(x) gsub('USD','',x$saleTotal))
+  routeBeg <- sapply(content$trips$tripOption[[1]]$slice[[1]]$segment, function(x) x$leg[[1]]$origin)
+  routeEnd <- sapply(content$trips$tripOption[[1]]$slice[[1]]$segment, function(x) x$leg[[1]]$destination)
+  individualFlights <-
+    paste(sapply(content$trips$tripOption[[1]]$slice[[1]]$segment,function(x) x$flight %>% unlist %>% paste(collapse='-')),collapse=' -> ')
+  paste(sapply(content$trips$tripOption[[1]]$slice[[2]]$segment,function(x) x$flight %>% unlist %>% paste(collapse='-')),collapse=' -> ')
+  content$trips$tripOption[[1]]$slice %>% length
+
 }
