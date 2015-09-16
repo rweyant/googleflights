@@ -5,6 +5,7 @@ suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 
 #' set Google API key for future functions
+#'
 #' @param key your API key
 set_apikey <- function(key) options('googleflightskey'=key)
 
@@ -35,6 +36,9 @@ search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
   return(content(request))
 }
 
+#' Summarize Segments
+#'
+#' @param trip
 summarize_segments <- function(trip){
 
   startFlight <- trip$slice[[1]]
