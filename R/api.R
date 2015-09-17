@@ -4,6 +4,10 @@ suppressPackageStartupMessages(library(XML))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 
+base_url <- paste('https://www.googleapis.com/qpxExpress/v1/trips/search?key=',
+                  getOption('googleflightskey'),sep='')
+
+
 #' set Google API key for future functions
 #'
 #' @param key your API key
@@ -15,10 +19,9 @@ set_apikey <- function(key) options('googleflightskey'=key)
 #' @param startDate Departure date (yyyy-mm-dd)
 #' @param startDate Return date (yyyy-mm-dd)
 #' @param numPassengers Number of people traveling
-search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
+search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
 
-  base_url <- paste('https://www.googleapis.com/qpxExpress/v1/trips/search?key=',
-                    getOption('googleflightskey'),sep='')
+  dots <- list(...)
 
   # Build query
   query <- list(
@@ -26,6 +29,21 @@ search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
       passengers=list(adultCount=numPassengers),
       slice=data.frame(origin=c(origin,dest),destination=c(dest,origin),date=c(startDate,returnDate)))
     )
+
+  # Add extra passenger info
+  query$request$passengers <- append(query$passengers,dots$childCount)
+  query$request$passengers <- append(query$passengers,dots$infantInLapCount)
+  query$request$passengers <- append(query$passengers,dots$infantInSeatCount)
+  query$request$passengers <- append(query$passengers,dots$seniorCount)
+
+  if(!is.null(dots$maxStops)) query$request$slice$maxStops <- dots$maxStops
+  if(!is.null(dots$maxConnectionDuration)) query$request$slice$maxStops <- dots$maxConnectionDuration
+  if(!is.null(dots$preferredCabin)) query$request$slice$maxStops <- dots$preferredCabin
+  if(!is.null(dots$permittedCarrier)) query$request$slice$maxStops <- dots$permittedCarrier
+  if(!is.null(dots$prohibitedCarrier)) query$request$slice$maxStops <- dots$prohibitedCarrier
+
+  if(!is.null(dots$prohibitedCarrier)) query$request$slice$maxStops <- dots$prohibitedCarrier
+
 
   # make Request
   request <- POST(url = base_url,body=query,encode='json')
@@ -35,6 +53,9 @@ search <- function(origin,dest,startDate,returnDate,numPassengers=1,...){
 
   return(content(request))
 }
+
+rlist <- content(request)
+xmlTreeParse(toJSON(content(request),pretty=TRUE))
 
 #' Summarize Segments
 #'
