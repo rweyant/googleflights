@@ -1,6 +1,6 @@
 Package: googleflights
 Type: Package
-Title: What the Package Does (Title Case)
+Title: An R Wrapper for Google's QPX Express Flight Search
 Version: 0.1
 Date: 2015-09-13
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
