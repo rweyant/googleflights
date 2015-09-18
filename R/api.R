@@ -31,18 +31,29 @@ search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
     )
 
   # Add extra passenger info
-  query$request$passengers <- append(query$passengers,dots$childCount)
-  query$request$passengers <- append(query$passengers,dots$infantInLapCount)
-  query$request$passengers <- append(query$passengers,dots$infantInSeatCount)
-  query$request$passengers <- append(query$passengers,dots$seniorCount)
+  query$request$passengers <-
+    append(query$request$passengers,dots[names(dots) %in% c('childCount',
+                                                            'infantInLapCount',
+                                                            'infantInLapCount',
+                                                            'infantInSeatCount',
+                                                            'seniorCount')])
 
+  # probably a better way to do this.
   if(!is.null(dots$maxStops)) query$request$slice$maxStops <- dots$maxStops
-  if(!is.null(dots$maxConnectionDuration)) query$request$slice$maxStops <- dots$maxConnectionDuration
-  if(!is.null(dots$preferredCabin)) query$request$slice$maxStops <- dots$preferredCabin
-  if(!is.null(dots$permittedCarrier)) query$request$slice$maxStops <- dots$permittedCarrier
+  if(!is.null(dots$maxConnectionDuration)) query$request$slice$maxConnectionDuration <- dots$maxConnectionDuration
+  if(!is.null(dots$preferredCabin)) query$request$slice$preferredCabin <- dots$preferredCabin
+  if(!is.null(dots$permittedCarrier)) query$request$slice$permittedCarrier <- dots$permittedCarrier
   if(!is.null(dots$prohibitedCarrier)) query$request$slice$maxStops <- dots$prohibitedCarrier
-
-  if(!is.null(dots$prohibitedCarrier)) query$request$slice$maxStops <- dots$prohibitedCarrier
+#
+#   query$request$slice <-
+#     append(query$request$slice,dots[names(dots) %in% c('maxStops',
+#                                                        'maxConnectionDuration',
+#                                                        'preferredCabin',
+#                                                        'permittedCarrier',
+#                                                        'prohibitedCarrier',
+#                                                        'alliance')])
+  query$request <-
+    append(query$request,dots[names(dots) %in% c('maxPrice','saleCountry','refundable','solutions')])
 
 
   # make Request
@@ -51,78 +62,5 @@ search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
   # Check if query was successful
   if(status_code(request) != 200) stop('Error with request...')
 
-  return(content(request))
-}
-
-rlist <- content(request)
-xmlTreeParse(toJSON(content(request),pretty=TRUE))
-
-#' Summarize Segments
-#'
-#' @param trip
-summarize_segments <- function(trip){
-
-  startFlight <- trip$slice[[1]]
-  returnFlight <- trip$slice[[2]]
-
-  price <- trip$saleTotal %>% gsub('USD','',.) %>% as.numeric
-
-  startOrig <- sapply(startFlight$segment, function(x) x$leg[[1]]$origin)
-  startDest <- sapply(startFlight$segment, function(x) x$leg[[1]]$destination)
-
-  returnOrig <- sapply(returnFlight$segment, function(x) x$leg[[1]]$origin)
-  returnDest <- sapply(returnFlight$segment, function(x) x$leg[[1]]$destination)
-
-  departing_flights <- sapply(startFlight$segment,function(x) x$flight %>% unlist %>% paste(collapse='-'))
-  returning_flights <- sapply(returnFlight$segment,function(x) x$flight %>% unlist %>% paste(collapse='-'))
-
-  departing_carriers <- sapply(startFlight$segment,function(x) x$flight$carrier)
-  returning_carriers <- sapply(returnFlight$segment,function(x) x$flight$carrier)
-
-  # test <- startFlight$segment[[1]]
-
-  cbind.data.frame(price,
-                   departing_stops=length(startOrig)-1,
-                   returning_stops=length(returnOrig)-1,
-                   departing_locations=startOrig,
-                   returning_locations=returnOrig,
-                   departing_flights=departing_flights,
-                   returning_flights=returning_flights,
-                   departing_carriers=departing_carriers,
-                   returning_carriers=returning_carriers,
-                   stringsAsFactors=FALSE)
-
-}
-
-simplify_ <- function(content){
-
-  # Each trip
-  trips <- content$trips$tripOption
-  # Extract information from each trip.
-  summary <-
-    sapply(trips,summarize_trip) %>% t
-  }
-
-nothing <- function(){
-  names(content$trips)
-  length(content$trips)
-  names(content$trips)
-  content$trips$data$airport[1]
-  tmp <- content$trips$tripOption[1]
-  tmp2 <- tmp[[1]]
-  tmp2$saleTotal
-  tmp3 <- tmp2$slice
-  tmp4 <- tmp3[[1]]
-  tmp4$duration
-
-  content$trips$tripOption
-  content$trips$tripOption[[1]]$saleTotal
-  salePrice <- sapply(content$trips$tripOption,function(x) gsub('USD','',x$saleTotal))
-  routeBeg <- sapply(content$trips$tripOption[[1]]$slice[[1]]$segment, function(x) x$leg[[1]]$origin)
-  routeEnd <- sapply(content$trips$tripOption[[1]]$slice[[1]]$segment, function(x) x$leg[[1]]$destination)
-  individualFlights <-
-    paste(sapply(content$trips$tripOption[[1]]$slice[[1]]$segment,function(x) x$flight %>% unlist %>% paste(collapse='-')),collapse=' -> ')
-  paste(sapply(content$trips$tripOption[[1]]$slice[[2]]$segment,function(x) x$flight %>% unlist %>% paste(collapse='-')),collapse=' -> ')
-  content$trips$tripOption[[1]]$slice %>% length
-
+  content(request)
 }
