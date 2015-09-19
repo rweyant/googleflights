@@ -21,6 +21,9 @@ summarize_segments <- function(trip){
   departing_carriers <- sapply(startFlight$segment,function(x) x$flight$carrier)
   returning_carriers <- sapply(returnFlight$segment,function(x) x$flight$carrier)
 
+  departing_duration <- sapply(startFlight$segment,function(x) x$duration)
+  returning_duration <- sapply(returnFlight$segment,function(x) x$duration)
+
   # test <- startFlight$segment[[1]]
   list(departing=
          cbind.data.frame(
