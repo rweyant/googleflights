@@ -1,13 +1,72 @@
 
-#' Summarize Segments
+#' Summarize a trip
 #'
 #' @param trip
-summarize_segments <- function(trip){
+summarize_segment <- function(trip_segment){
+
+  origin <- sapply(trip_segment$segment, function(x) x$leg[[1]]$origin)
+  destination <- sapply(trip_segment$segment, function(x) x$leg[[1]]$destination)
+
+  flight_number <- sapply(trip_segment$segment,function(x) x$flight %>% unlist %>% paste(collapse='-'))
+
+  carrier <- sapply(trip_segment$segment,function(x) x$flight$carrier)
+
+  duration <- sapply(trip_segment$segment,function(x) x$duration)
+
+  cbind.data.frame(
+    n_stops=length(origin)-1,
+    origin=origin,
+    destination=destination,
+    flight_number=flight_number,
+    carrier=carrier,
+    duration=duration,
+    stringsAsFactors=FALSE
+    )
+}
+
+extract.time.info <- function(x){
+
+  first.split <- str_split_fixed(x,'T',n=2)
+  if(grepl('\\-',first.split[2])) {
+    split_char <- '\\-'
+  } else if(grepl('\\+',first.split[2])) {
+    split_char <- '\\+'
+  } else stop('extract.time.info: Error parsing time.')
+
+  second.split <-  str_split_fixed(first.split[2],split_char,n=2)
+  data.frame(date=first.split[1],time=second.split[1],timezone=paste(substr(split_char,2,3),second.split[2],sep=''))
+}
+
+flatten_segment <- function(trip_segment){
+  nstops <- trip_segment$duration
+  names(trip_segment)
+  length(trip_segment$segment)
+  first <- trip_segment$segment[[1]]
+  second <- trip_segment$segment[[2]]
+
+  departure_time <- extract.time.info(first$leg[[1]]$departureTime)
+  arrival_time <- extract.time.info(second$leg[[1]]$arrivalTime)
+
+  second$duration
+
+  carriers
+  depart_time
+  arrive_time
+
+}
+
+summarize_trip <- function(trip){
+
+  price <- (trip$saleTotal %>% gsub('USD','',.) %>% as.numeric)
+  trip$slice
+
+
+  trip_summaries <- lapply(trip$slice,summarize_segment)
 
   startFlight <- trip$slice[[1]]
   returnFlight <- trip$slice[[2]]
 
-  price <- (trip$saleTotal %>% gsub('USD','',.) %>% as.numeric)
+
 
   startOrig <- sapply(startFlight$segment, function(x) x$leg[[1]]$origin)
   startDest <- sapply(startFlight$segment, function(x) x$leg[[1]]$destination)

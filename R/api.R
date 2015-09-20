@@ -4,14 +4,17 @@ suppressPackageStartupMessages(library(XML))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 
-base_url <- paste('https://www.googleapis.com/qpxExpress/v1/trips/search?key=',
-                  getOption('googleflightskey'),sep='')
-
 
 #' set Google API key for future functions
 #'
 #' @param key your API key
-set_apikey <- function(key) options('googleflightskey'=key)
+set_apikey <- function(key) {
+  options('googleflightskey'=key)
+  base_url <- paste('https://www.googleapis.com/qpxExpress/v1/trips/search?key=',
+                    key,sep='')
+  assign('base_url',base_url,envir=.GlobalEnv)
+}
+
 
 #' Search QPX for flights
 #' @param origin Departing Airport Code
