@@ -1,4 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-test.R
+R/test.R
+*test.R
+

@@ -4,7 +4,7 @@
 \alias{search}
 \title{Search QPX for flights}
 \usage{
-search(origin, dest, startDate, returnDate, numPassengers = 1, ...)
+search(origin, dest, startDate, returnDate, adultCount = 1, ...)
 }
 \arguments{
 \item{origin}{Departing Airport Code}
@@ -13,9 +13,9 @@ search(origin, dest, startDate, returnDate, numPassengers = 1, ...)
 
 \item{startDate}{Departure date (yyyy-mm-dd)}
 
-\item{numPassengers}{Number of people traveling}
-
 \item{startDate}{Return date (yyyy-mm-dd)}
+
+\item{numPassengers}{Number of people traveling}
 }
 \description{
 Search QPX for flights
