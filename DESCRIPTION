@@ -3,7 +3,20 @@ Type: Package
 Title: An R Wrapper for Google's QPX Express Flight Search
 Version: 0.1
 Date: 2015-09-13
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: person("Robert", "Weyant", email = "robert.weyant@gmail.com", role = c("aut", "cre"))
+Description: This package makes getting data from Google's
+QPX Express Flight Search into R direct and easy.
+License: GNU General Public License v2.0
+Imports: httr,
+  jsonlite,
+  XML,
+  stringr,
+  dplyr
+Depends: httr,
+  jsonlite,
+  XML,
+  stringr,
+  dplyr
+URL: http://www.bertplot.com/visualization/
+BugReport: https://github.com/rweyant/googleflights/issues
 LazyData: TRUE

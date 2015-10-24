@@ -22,6 +22,8 @@ set_apikey <- function(key) {
 #' @param startDate Departure date (yyyy-mm-dd)
 #' @param startDate Return date (yyyy-mm-dd)
 #' @param numPassengers Number of people traveling
+#'
+#' add documentation about other keyword arguments
 search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
 
   dots <- list(...)
@@ -47,14 +49,7 @@ search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
   if(!is.null(dots$preferredCabin)) query$request$slice$preferredCabin <- dots$preferredCabin
   if(!is.null(dots$permittedCarrier)) query$request$slice$permittedCarrier <- dots$permittedCarrier
   if(!is.null(dots$prohibitedCarrier)) query$request$slice$maxStops <- dots$prohibitedCarrier
-#
-#   query$request$slice <-
-#     append(query$request$slice,dots[names(dots) %in% c('maxStops',
-#                                                        'maxConnectionDuration',
-#                                                        'preferredCabin',
-#                                                        'permittedCarrier',
-#                                                        'prohibitedCarrier',
-#                                                        'alliance')])
+
   query$request <-
     append(query$request,dots[names(dots) %in% c('maxPrice','saleCountry','refundable','solutions')])
 
@@ -63,7 +58,20 @@ search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
   request <- POST(url = base_url,body=query,encode='json')
 
   # Check if query was successful
-  if(status_code(request) != 200) stop('Error with request...')
+  check_status_code(status_code(request) )
 
   content(request)
+}
+
+
+#' Check API call executed correctly
+#' @param code the status code returned from the POST request
+check_status_code <- function(code){
+  if(code == 400) stop('The request had bad syntax or was inherently impossible to be satisfied.')
+  if(code == 401) stop('Authentication failed, probably because of a bad API key.')
+  if(code == 402) stop('A limit was reached, either you exceeded per hour requests limits or your balance is insufficient.')
+  if(code == 403) stop('You are not authorized to perform this operation or the api version you\'re trying to use has been shut down.')
+  if(code == 404) stop('Requested resource was not found.')
+  if(code == 405) stop('Requested method was not found.')
+  if(code != 200) stop("Unknown Status Code.")
 }
