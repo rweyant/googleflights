@@ -1,6 +1,6 @@
 # googleflights
 
-This is an R interface for the Google QPX Express API.  Still undergoing development and testing.  Has not been tested on Windows or Mac yet.  
+This is an R interface for the [Google QPX Express API](https://www.google.com/flights/).  Still undergoing development and testing.  Has not been tested on Windows or Mac yet.  More documentation on the API can be found [here](https://developers.google.com/qpx-express/).
 
 ## Installation
 
