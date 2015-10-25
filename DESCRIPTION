@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2015-09-13
 Authors@R: person("Robert", "Weyant", email = "robert.weyant@gmail.com", role = c("aut", "cre"))
 Description: This package makes getting data from Google's
-QPX Express Flight Search into R direct and easy.
+  QPX Express Flight Search into R direct and easy.
 License: GNU General Public License v2.0
 Imports: httr,
   jsonlite,

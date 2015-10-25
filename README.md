@@ -6,6 +6,9 @@ This is an R interface for the [Google QPX Express API](https://www.google.com/f
 
 ```{r}
 devtools::install_github('rweyant/googleflights')
+
+# Set API key in a place all the functions have access to
+set_apikey(YOUR_APIKEY)
 ```
 
 ## Usage
