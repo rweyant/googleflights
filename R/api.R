@@ -1,9 +1,3 @@
-suppressPackageStartupMessages(library(httr))
-suppressPackageStartupMessages(library(jsonlite))
-suppressPackageStartupMessages(library(XML))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(stringr))
-
 
 #' set Google API key for future functions
 #'
@@ -31,7 +25,7 @@ search <- function(origin,dest,startDate,returnDate,adultCount=1,...){
   # Build query
   query <- list(
     request=list(
-      passengers=list(adultCount=numPassengers),
+      passengers=list(adultCount=adultCount),
       slice=data.frame(origin=c(origin,dest),destination=c(dest,origin),date=c(startDate,returnDate)))
     )
 
